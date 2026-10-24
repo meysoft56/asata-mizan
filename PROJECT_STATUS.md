@@ -1,8 +1,43 @@
 # ASATA MİZAN — Devam ve görev durum listesi
 
-**Son güncelleme:** 2026-10-24  
+**Son güncelleme:** 2026-10-25  
 **Çalışma alanı:** `Masaüstü/web`  
-**Yayın durumu:** Normal site yerel geliştirme modunda; ayrıca sentetik veriye ayrılmış tam erişimli demo `http://127.0.0.1:8002/` adresinde çalışıyor. Hosting'e yayın yapılmadı.
+**Yayın durumu:** Kaynak kod herkese açık [meysoft56/asata-mizan](https://github.com/meysoft56/asata-mizan) deposunda. Uygulama yerel geliştirme modunda; sentetik veriye ayrılmış tam erişimli demo `http://127.0.0.1:8002/` adresinde. Hosting'e/üretime yayın yapılmadı.
+
+## İlerleme tahmini ve iş programı
+
+Bu oranlar satır sayısı veya yazılmış kod miktarı değil, blueprint'teki fazların çıkış ölçütlerine göre yaklaşık kapsam tamamlama tahminidir. MVP'deki altı faza eşit ağırlık verildi; tamamlanmayan güvenlik ve veri izolasyonu işleri, prototipteki ekran sayısı yüksek olsa da ilerleme oranını sınırlar.
+
+| Kapsam | Tamamlanan | Kalan | Hesap |
+|---|---:|---:|---|
+| Dar MVP (Faz 0–5) | **yaklaşık %28** | **yaklaşık %72** | Faz tahminlerinin eşit ağırlıklı ortalaması: %27,5 |
+| Tüm ürün vizyonu (Faz 0–10) | **yaklaşık %17** | **yaklaşık %83** | MVP fazlarına ek olarak yapım, finans, teslim ve ileri entegrasyon fazları da hesaba katılmış kaba ortalama |
+
+| Faz | Tahmini tamamlanma | Kalan iş / çıkış kapısı |
+|---|---:|---|
+| 0 — Ürün ve alan keşfi | %50 | Pilot organizasyon, paydaş onayı, veri sınıfları ve başarı ölçütleri yazılı olarak netleşmeli |
+| 1 — Güvenli temel | %10 | Tenant izolasyonu, üretim kimliği, kapsamlı yetki, audit, özel belge alanı, yedek/geri yükleme ve negatif testler |
+| 2 — Malik ve taşınmaz | %10 | Organizasyon/davet, malik-temsil-parsel-hisse ilişkileri ve kaynaklı doğrulama |
+| 3 — CRM ve fırsat | %65 | Mevcut başvuru/onay akışını tenant ve taşınmaz kayıtlarıyla tamamlamak; eksik bilgi, revizyon ve iletişim izinlerini kapsamak |
+| 4 — Fizibilite ve uzlaşma | %15 | Onaylı brif sürümüne bağlı sürümlü fizibilite, teklif ve keşif/metraj; kaynak değişiminde yeniden inceleme |
+| 5 — Teknik proje çekirdeği | %15 | Uzman görevleri, tasarım/belge revizyonları, ölçüm dayanağı ve alan bazlı erişim |
+| 6–10 — Ürün vizyonunun devamı | %0–5 | Yapım/satın alma, finans/İK, satış/teslim ve AI/entegrasyon/ölçek MVP sonrasında |
+
+### Önerilen iş programı
+
+Tahmin, bir geliştiricinin tam zamanlı çalışması ve ürün kararlarının zamanında verilmesi varsayımıyla **yaklaşık 11–17 haftadır**. Takvim taahhüdü değildir; kullanıcı/paydaş onayı ve hukuki/KVKK değerlendirme süreleri bu tahmine dahil değildir. Sıralama güvenlik ve veri izolasyonu bağımlılıklarını gözetir.
+
+| Sıra | İş paketi | Tahmini süre | Bağımlılık / tamamlanma ölçütü |
+|---:|---|---:|---|
+| 1 | Faz 0 kararlarını kapatma | 1 hafta | Pilot sahibi, kullanıcı rolleri, veri sınıfları ve MVP başarı ölçütleri onaylı |
+| 2 | Tenant, kimlik, yetki, audit ve veri tabanı temeli | 2–3 hafta | Faz 0; tenantlar arası erişim testleri, audit ve yedek/geri yükleme tatbikatı başarılı |
+| 3 | Malik, temsil, taşınmaz ve belge talebi | 1,5–2,5 hafta | Güvenli temel hazır; yetkisiz proje/taşınmaz erişimi engelleniyor |
+| 4 | Başvuru/CRM akışını güvenli temele taşıma | 1–2 hafta | Faz 2 kayıtları; düzeltme, onay, revizyon geçmişi ve rol sınırları uçtan uca testli |
+| 5 | Sürümlü fizibilite, teklif ve keşif/metraj | 2–3 hafta | Onaylı brif sürümüne kaynak bağı; kaynak değişince taslaklar yeniden incelemede |
+| 6 | Uzman görevleri, belge/revizyon ve teknik karar | 2–3 hafta | Atanmış uzman kapsamı, veri sınıfı erişimi ve işlem izi testli |
+| 7 | Pilot, güvenlik/regresyon testleri ve yayın hazırlığı | 1–2 hafta | Gerçek veri açılmadan önce kabul senaryoları, yedek/geri dönüş ve operasyon kontrol listesi |
+
+MVP için gerçek kişisel/tapu belgeleri kabul edilmemeli ve üretim yayını; Faz 1 güvenlik çıkış ölçütleri, paydaş onayı ve pilot kabulü tamamlanmadan yapılmamalıdır. Faz 6–10 geniş ürün vizyonu, bu MVP programının dışındadır.
 
 ## Anlık görev panosu
 
