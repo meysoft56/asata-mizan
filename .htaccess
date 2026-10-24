@@ -1,0 +1,6 @@
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<FilesMatch "^(admin\.json|projects\.json|leads\.json|.*\.lock)$">
+  Require all denied
+</FilesMatch>

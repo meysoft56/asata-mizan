@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101714">
+  <meta name="description" content="Kat karşılığı geliştirme ve kentsel dönüşüm projeleri için şeffaf ön fizibilite platformu.">
+  <title>ASATA MİZAN — Gayrimenkul Geliştirme Platformu</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211c;
+      --muted: #69766e;
+      --paper: #f5f6f2;
+      --white: #fff;
+      --line: #e5e9e3;
+      --green: #176b4d;
+      --green-bright: #b9ef79;
+      --green-pale: #eaf4ed;
+      --dark: #101714;
+      --dark-soft: #19231e;
+      --gold: #d8ba77;
+      --radius: 18px;
+      --shadow: 0 18px 55px rgba(26, 42, 32, .09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+
+    .topbar {
+      height: 76px;
+      color: #f4f7f1;
+      background: var(--dark);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; gap: 11px; align-items: center; flex-shrink: 0; }
+    .brand-mark {
+      width: 36px; height: 36px; border: 1px solid rgba(185,239,121,.45);
+      color: var(--green-bright); display: grid; place-items: center;
+      border-radius: 11px; font: 700 18px Georgia, serif;
+    }
+    .brand-name { font: 700 17px Georgia, "Times New Roman", serif; letter-spacing: .16em; }
+    .brand-name small { display: block; margin-top: 3px; color: #89978e; font: 500 8px/1.2 Inter, sans-serif; letter-spacing: .19em; }
+    .nav-links { display: flex; gap: 30px; align-items: center; color: #bbc5bd; font-size: 12px; }
+    .nav-links a:hover { color: var(--green-bright); }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .login { color: #c7d0c9; font-size: 12px; }
+    .button {
+      min-height: 42px; padding: 0 17px; border-radius: 9px; border: 1px solid transparent;
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      cursor: pointer; transition: transform .18s, background .18s, border-color .18s;
+      font-size: 12px; font-weight: 700;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button-lime { color: #152019; background: var(--green-bright); }
+    .button-lime:hover { background: #c9f59b; }
+    .button-outline { color: #e6eee7; border-color: rgba(255,255,255,.2); background: transparent; }
+    .button-outline:hover { border-color: rgba(185,239,121,.7); }
+    .button-dark { color: #fff; background: var(--dark); }
+    .button-dark:hover { background: #26352c; }
+    .mobile-menu { display: none; border: 0; color: white; background: transparent; font-size: 24px; }
+
+    .hero {
+      position: relative; overflow: hidden; color: #f5f7f3; background: var(--dark);
+      padding: 72px 0 76px;
+    }
+    .hero:before {
+      content: ""; position: absolute; width: 680px; height: 680px; right: -180px; top: -350px;
+      border-radius: 50%; border: 1px solid rgba(185,239,121,.1);
+      box-shadow: 0 0 0 80px rgba(185,239,121,.025), 0 0 0 160px rgba(185,239,121,.02);
+      pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 64px; position: relative; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--green-bright); font-size: 10px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    .eyebrow:before { content: ""; width: 21px; height: 1px; background: currentColor; }
+    h1 { max-width: 560px; margin: 20px 0 18px; font: 500 clamp(42px, 5.2vw, 66px)/1.04 Georgia, "Times New Roman", serif; letter-spacing: -.045em; }
+    h1 em { color: var(--green-bright); font-weight: 400; }
+    .hero-copy { max-width: 480px; margin: 0; color: #aebbb2; font-size: 14px; line-height: 1.8; }
+    .hero-buttons { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 28px; }
+    .trust-line { display: flex; align-items: center; gap: 10px; margin-top: 34px; color: #95a39a; font-size: 10px; }
+    .trust-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 0 4px rgba(185,239,121,.12); }
+
+    .calc-card {
+      color: var(--ink); background: #fff; border: 1px solid rgba(255,255,255,.65);
+      border-radius: 19px; padding: 22px; box-shadow: 0 24px 80px rgba(0,0,0,.23);
+    }
+    .calc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 19px; }
+    .calc-head h2 { margin: 0; font: 600 19px Georgia, serif; letter-spacing: -.02em; }
+    .calc-head p { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+    .live-tag { display: inline-flex; gap: 6px; align-items: center; padding: 7px 9px; border-radius: 20px; color: #176b4d; background: var(--green-pale); font-size: 9px; font-weight: 700; white-space: nowrap; }
+    .live-tag:before { content:""; width: 6px; height: 6px; border-radius:50%; background: #42a778; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; margin-bottom: 6px; color: #59665e; font-size: 10px; font-weight: 650; }
+    .field input, .field select {
+      width: 100%; height: 40px; border: 1px solid #e2e8e2; outline: none;
+      border-radius: 8px; padding: 0 11px; color: var(--ink); background: #fbfcfa; font-size: 12px;
+    }
+    .field input:focus, .field select:focus { border-color: #47946d; box-shadow: 0 0 0 3px rgba(71,148,109,.1); }
+    .field small { display: block; min-height: 12px; margin-top: 4px; color: #8a958e; font-size: 9px; }
+    .calc-divider { height: 1px; background: var(--line); margin: 17px 0; }
+    .result-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+    .result-label { color: var(--muted); font-size: 10px; }
+    .result-number { margin-top: 5px; font: 600 27px Georgia, serif; letter-spacing: -.04em; }
+    .result-number span { font: 500 12px Inter, sans-serif; letter-spacing: 0; }
+    .split-pill { padding: 8px 10px; color: #176b4d; background: var(--green-pale); border-radius: 8px; font-size: 10px; font-weight: 750; }
+    .split-bar { height: 8px; display: flex; overflow: hidden; background: #e8ede8; border-radius: 9px; margin: 13px 0 9px; }
+    .split-owner { width: 43%; background: #176b4d; transition: width .2s; }
+    .split-builder { flex: 1; background: #c6e87e; }
+    .split-legend { display: flex; justify-content: space-between; color: #69766e; font-size: 9px; }
+    .split-legend strong { color: var(--ink); font-size: 10px; }
+    .calc-note { margin: 14px 0 0; padding: 10px 11px; border-radius: 8px; color: #68746c; background: #f5f7f4; font-size: 9px; line-height: 1.55; }
+    .calc-note b { color: #39463d; }
+
+    .proof-strip { background: #fff; border-bottom: 1px solid var(--line); }
+    .proof-grid { min-height: 91px; display: grid; grid-template-columns: repeat(4,1fr); align-items: center; }
+    .proof-item { display: flex; align-items: center; justify-content: center; gap: 11px; padding: 10px 16px; border-right: 1px solid var(--line); }
+    .proof-item:last-child { border: 0; }
+    .proof-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: var(--green); background: var(--green-pale); font-size: 16px; }
+    .proof-item strong { display: block; font: 600 12px Georgia, serif; }
+    .proof-item span { display: block; margin-top: 4px; color: var(--muted); font-size: 9px; }
+
+    section { scroll-margin-top: 30px; }
+    .section { padding: 86px 0; }
+    .section-heading { max-width: 600px; margin-bottom: 37px; }
+    .section-heading .eyebrow { color: var(--green); }
+    h2.section-title { margin: 14px 0 11px; font: 500 clamp(30px, 3.5vw, 43px)/1.12 Georgia, serif; letter-spacing: -.035em; }
+    .section-heading p { max-width: 510px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .feature-card { min-height: 208px; padding: 23px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; transition: transform .18s, box-shadow .18s; }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .feature-icon { width: 38px; height: 38px; display: grid; place-items: center; color: var(--green); background: var(--green-pale); border-radius: 11px; font-size: 17px; }
+    .feature-card h3 { margin: 20px 0 8px; font: 600 18px Georgia, serif; }
+    .feature-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.75; }
+
+    .workflow { background: #eaf0e9; }
+    .workflow-grid { display: grid; grid-template-columns: .82fr 1.18fr; gap: 70px; align-items: center; }
+    .workflow-grid .section-heading { margin: 0; }
+    .steps { display: grid; gap: 0; }
+    .step { display: grid; grid-template-columns: 43px 1fr; gap: 15px; padding: 17px 0; border-bottom: 1px solid rgba(23,33,28,.12); }
+    .step:last-child { border: 0; }
+    .step-num { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #b9c8bb; border-radius: 50%; color: var(--green); font: 600 14px Georgia, serif; }
+    .step h3 { margin: 1px 0 5px; font: 600 15px Georgia, serif; }
+    .step p { margin: 0; color: #647168; font-size: 10px; line-height: 1.65; }
+
+    .fair-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .fair-visual { min-height: 310px; position: relative; overflow: hidden; border-radius: 19px; padding: 24px; color: #e9f1e9; background: var(--dark); }
+    .fair-visual:after { content: ""; position:absolute; inset: 0; opacity:.45; background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,.05) 1px, transparent 1px); background-size: 30px 30px; pointer-events:none; }
+    .visual-top { position: relative; z-index:1; display:flex; justify-content:space-between; align-items:center; color:#b0bdb3; font-size:10px; }
+    .visual-badge { padding:6px 9px; color:var(--green-bright); border:1px solid rgba(185,239,121,.28); border-radius:20px; }
+    .building { height: 190px; display:flex; align-items:flex-end; justify-content:center; gap:5px; position:relative; z-index:1; margin-top:12px; }
+    .tower { width: 58px; border:1px solid rgba(185,239,121,.42); background:linear-gradient(160deg,rgba(185,239,121,.24),rgba(185,239,121,.04)); position:relative; }
+    .tower:before { content:""; position:absolute; inset:9px; background:repeating-linear-gradient(0deg,transparent 0 14px,rgba(185,239,121,.42) 14px 16px),repeating-linear-gradient(90deg,transparent 0 14px,rgba(185,239,121,.35) 14px 16px); }
+    .tower:nth-child(1){height:105px}.tower:nth-child(2){height:145px}.tower:nth-child(3){height:185px}.tower:nth-child(4){height:128px}.tower:nth-child(5){height:90px}
+    .ground { position:absolute; bottom:0; left:5%; right:5%; height:1px; background:rgba(185,239,121,.4); }
+    .visual-caption { position:relative; z-index:1; display:flex; justify-content:space-between; color:#92a198; font-size:9px; }
+    .fair-points { display: grid; gap: 17px; margin-top: 27px; }
+    .fair-point { display:flex; gap:12px; align-items:flex-start; }
+    .check { flex:0 0 19px; width:19px; height:19px; display:grid; place-items:center; color:var(--green); background:var(--green-pale); border-radius:50%; font-size:11px; font-weight:800; }
+    .fair-point strong { display:block; margin:0 0 4px; font-size:12px; }
+    .fair-point span { display:block; color:var(--muted); font-size:10px; line-height:1.6; }
+
+    .workspace { padding: 70px 0; background: #edf1eb; }
+    .workspace-head { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:25px; }
+    .workspace-head h2 { margin:12px 0 8px; font:500 clamp(30px,3.5vw,42px)/1.1 Georgia,serif; letter-spacing:-.035em; }
+    .workspace-head p { max-width:560px; margin:0; color:var(--muted); font-size:12px; line-height:1.7; }
+    .prototype-label { flex-shrink:0; padding:8px 11px; border:1px solid #d9e2d8; border-radius:20px; color:#536258; background:#f7f9f6; font-size:9px; font-weight:700; }
+    .workspace-shell { display:grid; grid-template-columns:220px 1fr; min-height:470px; overflow:hidden; border:1px solid #e0e6df; border-radius:18px; background:#fff; box-shadow:var(--shadow); }
+    .workspace-side { padding:20px 13px; border-right:1px solid var(--line); background:#fbfcfa; }
+    .workspace-project { padding:5px 10px 17px; border-bottom:1px solid var(--line); margin-bottom:13px; }
+    .workspace-project span { display:block; color:var(--muted); font-size:9px; }
+    .workspace-project strong { display:block; margin-top:6px; font:600 14px Georgia,serif; }
+    .workspace-tabs { display:grid; gap:5px; }
+    .workspace-tab { width:100%; padding:11px 10px; border:0; border-radius:8px; color:#637067; background:transparent; text-align:left; cursor:pointer; font-size:11px; font-weight:650; }
+    .workspace-tab:hover { background:#f0f4ef; }
+    .workspace-tab[aria-selected="true"] { color:#155b41; background:#e9f2eb; }
+    .workspace-main { min-width:0; padding:24px; }
+    .workspace-panel[hidden] { display:none; }
+    .panel-title { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; margin-bottom:18px; }
+    .panel-title h3 { margin:0; font:600 20px Georgia,serif; }
+    .panel-title p { margin:6px 0 0; color:var(--muted); font-size:10px; line-height:1.6; }
+    .panel-chip { flex-shrink:0; padding:6px 9px; border-radius:20px; color:#176b4d; background:var(--green-pale); font-size:9px; font-weight:700; }
+    .workspace-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:17px 0; }
+    .workspace-metric { padding:14px; border:1px solid var(--line); border-radius:11px; background:#fcfdfb; }
+    .workspace-metric span { display:block; color:var(--muted); font-size:9px; }
+    .workspace-metric strong { display:block; margin-top:8px; font:600 19px Georgia,serif; }
+    .workspace-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .workspace-field label { display:block; margin-bottom:6px; color:#59665e; font-size:10px; font-weight:650; }
+    .workspace-field input, .workspace-field select, .workspace-field textarea { width:100%; min-height:39px; padding:9px 10px; border:1px solid #e2e8e2; border-radius:8px; outline:none; color:var(--ink); background:#fff; font-size:11px; }
+    .workspace-field textarea { min-height:88px; resize:vertical; line-height:1.6; }
+    .workspace-field input:focus, .workspace-field select:focus, .workspace-field textarea:focus { border-color:#47946d; box-shadow:0 0 0 3px rgba(71,148,109,.1); }
+    .workspace-hint { margin:13px 0 0; padding:11px 12px; border-radius:8px; color:#58645c; background:#f4f7f3; font-size:9px; line-height:1.6; }
+    .workspace-hint.warning { color:#725b2d; background:#fbf6e9; }
+    .workspace-table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+    .workspace-table { width:100%; min-width:600px; border-collapse:collapse; font-size:10px; }
+    .workspace-table th, .workspace-table td { padding:10px 9px; border-bottom:1px solid var(--line); text-align:left; }
+    .workspace-table th { color:#66736a; background:#f8faf7; font-size:9px; font-weight:700; }
+    .workspace-table tr:last-child td { border-bottom:0; }
+    .workspace-table input, .workspace-table select { width:100%; min-width:55px; height:32px; padding:0 7px; border:1px solid #e2e8e2; border-radius:6px; color:var(--ink); background:#fff; font-size:10px; }
+    .checklist { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .check-item { display:flex; align-items:flex-start; gap:9px; padding:11px; border:1px solid var(--line); border-radius:9px; color:#46534a; background:#fff; font-size:10px; line-height:1.45; }
+    .check-item input { margin:1px 0 0; accent-color:#176b4d; }
+    .check-progress { height:7px; overflow:hidden; margin:12px 0 5px; border-radius:9px; background:#edf1ec; }
+    .check-progress span { display:block; width:0; height:100%; border-radius:inherit; background:#176b4d; transition:width .2s; }
+    .contract-preview { margin-top:14px; padding:15px; border:1px solid var(--line); border-radius:10px; background:#fbfcfa; color:#4d5a51; font:11px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; }
+    .panel-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:14px; }
+    .button-small { min-height:36px; padding:0 12px; font-size:10px; }
+    .status-message { min-height:16px; margin:9px 0 0; color:#176b4d; font-size:10px; }
+
+    .milestone-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:18px; }
+    .milestone-card { padding:22px 20px; border:1px solid var(--line); border-radius:16px; background:#fff; box-shadow:var(--shadow); }
+    .mini-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; }
+    .mini-head h3 { margin:0; font:600 18px Georgia,serif; }
+    .risk-pills { display:flex; flex-wrap:wrap; gap:7px; margin:0 0 18px; }
+    .risk-pills span { display:inline-flex; padding:6px 9px; border-radius:999px; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#214f3a; background:var(--green-pale); }
+    .risk-meter { width:100%; height:11px; overflow:hidden; border-radius:999px; background:#edf2ed; }
+    .risk-meter span { display:block; width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg, #7fc977 0%, #d7c96d 45%, #d47847 100%); transition:width .2s ease; }
+    .risk-summary { margin-top:14px; }
+    .risk-summary strong { display:block; font-size:12px; }
+    .risk-summary p { margin:7px 0 0; color:var(--muted); font-size:11px; line-height:1.7; }
+    .milestone-list { list-style:none; padding:0; margin:0; display:grid; gap:12px; }
+    .milestone-list li { display:flex; gap:12px; align-items:flex-start; padding:12px 0; border-bottom:1px solid var(--line); }
+    .milestone-list li:last-child { border-bottom:none; padding-bottom:0; }
+    .milestone-list span { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--green-pale); color:var(--green); font-size:10px; font-weight:700; }
+    .milestone-list strong { display:block; font-size:12px; margin-bottom:4px; }
+    .milestone-list p { margin:0; color:var(--muted); font-size:11px; line-height:1.6; }
+
+    .cta { padding: 0 0 85px; }
+    .cta-panel { display:flex; align-items:center; justify-content:space-between; gap:28px; padding: 33px 38px; border-radius: 17px; color:#f2f6f1; background:var(--dark); }
+    .cta-panel h2 { margin:0 0 7px; font:500 27px Georgia,serif; }
+    .cta-panel p { margin:0; color:#aab8ae; font-size:11px; line-height:1.6; }
+    footer { padding: 26px 0; color:#9ba79e; background:var(--dark); }
+    .footer-row { display:flex; justify-content:space-between; align-items:center; gap:18px; }
+    .footer-brand { color:#e6ece6; font:600 12px Georgia,serif; letter-spacing:.12em; }
+    .footer-copy { font-size:9px; }
+    .footer-links { display:flex; gap:18px; font-size:9px; }
+
+    @media (max-width: 900px) {
+      .hero-grid { gap: 32px; }
+      .nav-links { gap: 17px; }
+      .proof-item { padding: 10px 8px; }
+      .workflow-grid { gap: 42px; }
+      .fair-grid { gap: 36px; }
+      .workspace-shell { grid-template-columns:190px 1fr; }
+      .workspace-main { padding:20px; }
+    }
+    @media (max-width: 700px) {
+      .wrap { width: min(100% - 32px, 560px); }
+      .topbar { height: 66px; }
+      .nav-links, .login { display:none; }
+      .nav-actions .button { min-height:36px; padding:0 12px; font-size:10px; }
+      .mobile-menu { display:block; }
+      .nav.open { align-items:flex-start; }
+      .nav.open .nav-links { display:flex; position:absolute; left:0; right:0; top:65px; padding:17px 24px 20px; flex-direction:column; align-items:flex-start; gap:18px; background:var(--dark); border-top:1px solid rgba(255,255,255,.08); }
+      .hero { padding: 55px 0 48px; }
+      .hero-grid { grid-template-columns:1fr; gap:34px; }
+      h1 { max-width:460px; font-size:clamp(42px, 12vw, 58px); }
+      .hero-copy { font-size:13px; }
+      .calc-card { padding:18px; }
+      .proof-grid { grid-template-columns:1fr 1fr; padding:8px 0; }
+      .proof-item { justify-content:flex-start; border-right:0; min-height:65px; }
+      .proof-item:nth-child(odd) { border-right:1px solid var(--line); }
+      .section { padding:65px 0; }
+      .feature-grid { grid-template-columns:1fr; }
+      .feature-card { min-height:0; }
+      .workflow-grid, .fair-grid { grid-template-columns:1fr; gap:30px; }
+      .workspace { padding:58px 0; }
+      .workspace-head { align-items:flex-start; flex-direction:column; }
+      .workspace-shell { grid-template-columns:1fr; }
+      .workspace-side { padding:12px; border-right:0; border-bottom:1px solid var(--line); }
+      .workspace-project { padding:5px 7px 12px; margin-bottom:9px; }
+      .workspace-tabs { display:flex; overflow-x:auto; gap:5px; }
+      .workspace-tab { flex:0 0 auto; width:auto; padding:10px; white-space:nowrap; }
+      .workspace-main { padding:17px; }
+      .workspace-metrics { grid-template-columns:1fr 1fr; }
+      .workspace-metric:last-child { grid-column:1/-1; }
+      .checklist { grid-template-columns:1fr; }
+      .workflow-grid .section-heading { max-width:500px; }
+      .fair-visual { min-height:280px; }
+      .cta { padding-bottom:60px; }
+      .cta-panel { align-items:flex-start; flex-direction:column; padding:25px; }
+      .footer-row { flex-wrap:wrap; }
+      .footer-copy { order:3; width:100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *:before, *:after { scroll-behavior:auto !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap nav" id="nav">
+      <a class="brand" href="#top" aria-label="ASATA MİZAN ana sayfa">
+        <span class="brand-mark">M</span>
+        <span class="brand-name">ASATA MİZAN<small>GAYRİMENKUL GELİŞTİRME PLATFORMU</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Ana menü">
+        <a href="#platform">Platform</a>
+        <a href="#calisma-alani">Çalışma alanı</a>
+        <a href="#surec">Nasıl çalışır?</a>
+        <a href="#hakkaniyet">Şeffaflık</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="login" href="#iletisim">Giriş yap</a>
+        <a class="button button-lime" href="#hesapla">Ön fizibilite oluştur <span aria-hidden="true">↗</span></a>
+        <button class="mobile-menu" id="menuButton" type="button" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Kat karşılığı geliştirmede yeni standart</span>
+          <h1>Arsanızın potansiyeli, <em>hakkaniyetle</em> buluşsun.</h1>
+          <p class="hero-copy">İmar, maliyet ve paylaşım senaryolarını tek yerde değerlendirin. Her adımı anlaşılır verilerle görün; kararınızı güvenle verin.</p>
+          <div class="hero-buttons">
+            <a class="button button-lime" href="#hesapla">Arsamı analiz et <span aria-hidden="true">→</span></a>
+            <a class="button button-outline" href="#platform">Platformu keşfet</a>
+          </div>
+          <div class="trust-line"><span class="trust-dot"></span> Şeffaf hesaplama. Taraflar için ortak zemin.</div>
+        </div>
+
+        <div class="calc-card" id="hesapla">
+          <div class="calc-head">
+            <div>
+              <h2>Hızlı ön fizibilite</h2>
+              <p>Temel bilgileri girin, senaryonuzu anında görün.</p>
+            </div>
+            <span class="live-tag">Senaryo aracı</span>
+          </div>
+          <form id="feasibilityForm" onsubmit="return false">
+            <div class="form-grid">
+              <div class="field">
+                <label for="city">İl</label>
+                <select id="city">
+                  <option>İstanbul</option><option>Ankara</option><option>İzmir</option><option>Diğer</option>
+                </select>
+                <small>Örnek konum seçimi</small>
+              </div>
+              <div class="field">
+                <label for="district">İlçe / Mahalle</label>
+                <input id="district" type="text" value="Kadıköy / Örnek Mahalle" autocomplete="off">
+                <small>Konum bilgisi kullanıcı girdisidir.</small>
+              </div>
+              <div class="field">
+                <label for="parcelArea">Parsel alanı (m²)</label>
+                <input id="parcelArea" type="number" min="0" step="1" value="1000" inputmode="decimal">
+                <small>Tapu ve aplikasyonla doğrulayın.</small>
+              </div>
+              <div class="field">
+                <label for="emsal">Emsal (KAKS)</label>
+                <input id="emsal" type="number" min="0" step="0.01" value="1.50" inputmode="decimal">
+                <small>Resmî imar belgesinden kontrol edin.</small>
+              </div>
+              <div class="field">
+                <label for="unitCost">Öngörülen maliyet (₺/m²)</label>
+                <input id="unitCost" type="number" min="0" step="500" value="27500" inputmode="decimal">
+                <small>Güncel tekliflerle güncellenmelidir.</small>
+              </div>
+              <div class="field">
+                <label for="ownerShare">Arsa sahibi payı (%)</label>
+                <input id="ownerShare" type="number" min="0" max="100" step="1" value="43" inputmode="decimal">
+                <small>Senaryo varsayımı; teklif değildir.</small>
+              </div>
+            </div>
+          </form>
+          <div class="calc-divider"></div>
+          <div class="result-top">
+            <div>
+              <div class="result-label">Emsale göre tahmini inşaat alanı</div>
+              <div class="result-number"><span id="buildArea">1.500</span> <span>m²</span></div>
+            </div>
+            <div class="split-pill"><span id="ownerShareBadge">%43</span> arsa sahibi</div>
+          </div>
+          <div class="split-bar" aria-label="Paylaşım oranı görselleştirmesi">
+            <div class="split-owner" id="splitOwner"></div><div class="split-builder"></div>
+          </div>
+          <div class="split-legend">
+            <span>Arsa sahibi <strong id="ownerLegend">%43</strong></span>
+            <span>Müteahhit <strong id="builderLegend">%57</strong></span>
+          </div>
+          <p class="calc-note"><b>Ön bilgi:</b> Bu araç yalnızca kullanıcı girdilerine dayalı örnek senaryo üretir. İmar hakkı, emsal dışı alan, maliyet ve paylaşım oranı resmî kurumlar ve uzmanlarca doğrulanmalıdır.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="proof-strip" aria-label="Platform yaklaşımı">
+      <div class="wrap proof-grid">
+        <div class="proof-item"><span class="proof-icon" aria-hidden="true">⌖</span><div><strong>İmar farkındalığı</strong><span>Belge odaklı ön inceleme</span></div></div>
+        <div class="proof-item"><span class="proof-icon" aria-hidden="true">▥</span><div><strong>Senaryo karşılaştırma</strong><span>Varsayımlar görünür</span></div></div>
+        <div class="proof-item"><span class="proof-icon" aria-hidden="true">◇</span><div><strong>Şeffaf paylaşım</strong><span>Taraflar için ortak görünüm</span></div></div>
+        <div class="proof-item"><span class="proof-icon" aria-hidden="true">✓</span><div><strong>Güven odaklı süreç</strong><span>Kontrol listeleriyle ilerleyin</span></div></div>
+      </div>
+    </div>
+
+    <section class="workspace" id="calisma-alani">
+      <div class="wrap">
+        <div class="workspace-head">
+          <div>
+            <span class="eyebrow" style="color:var(--green)">ASATA MİZAN · ÇALIŞMA ALANI</span>
+            <h2>Proje araçları</h2>
+            <p>İlk değerlendirme için senaryo hesaplayın, bağımsız bölümleri ölçütlerle karşılaştırın ve belge hazırlığını takip edin.</p>
+          </div>
+          <span class="prototype-label">Tarayıcıda çalışan prototip</span>
+        </div>
+        <div class="workspace-shell">
+          <aside class="workspace-side" aria-label="Proje araçları menüsü">
+            <div class="workspace-project"><span>AKTİF ÇALIŞMA</span><strong id="workspaceProjectName">Yeni parsel analizi</strong></div>
+            <div class="workspace-tabs" role="tablist" aria-label="Proje modülleri">
+              <button class="workspace-tab" id="tab-feasibility" role="tab" aria-selected="true" aria-controls="panel-feasibility">▦　Fizibilite</button>
+              <button class="workspace-tab" id="tab-sherefiyye" role="tab" aria-selected="false" aria-controls="panel-sherefiyye">◇　Şerefiye</button>
+              <button class="workspace-tab" id="tab-documents" role="tab" aria-selected="false" aria-controls="panel-documents">▤　Belge kontrolü</button>
+              <button class="workspace-tab" id="tab-contractor" role="tab" aria-selected="false" aria-controls="panel-contractor">♙　Müteahhit kontrolü</button>
+              <button class="workspace-tab" id="tab-contract" role="tab" aria-selected="false" aria-controls="panel-contract">✎　Sözleşme taslağı</button>
+            </div>
+          </aside>
+
+          <div class="workspace-main">
+            <section class="workspace-panel" id="panel-feasibility" role="tabpanel" aria-labelledby="tab-feasibility">
+              <div class="panel-title"><div><h3>Ön fizibilite özeti</h3><p>Üstteki hızlı hesaplayıcıdaki alan ve paylaşım girdileri bu senaryoya yansır.</p></div><span class="panel-chip">Ön çalışma</span></div>
+              <div class="workspace-metrics">
+                <div class="workspace-metric"><span>Emsale göre alan</span><strong><span id="workspaceArea">1.500</span> m²</strong></div>
+                <div class="workspace-metric"><span>Öngörülen toplam yapım maliyeti</span><strong id="workspaceCost">₺41.250.000</strong></div>
+                <div class="workspace-metric"><span>Paylaşım senaryosu</span><strong><span id="workspaceSplit">%43 / %57</span></strong></div>
+              </div>
+              <div class="workspace-grid">
+                <div class="workspace-field"><label for="projectName">Çalışma adı</label><input id="projectName" type="text" value="Yeni parsel analizi"></div>
+                <div class="workspace-field"><label for="taks">TAKS (isteğe bağlı, ön bilgi)</label><input id="taks" type="number" min="0" max="1" step="0.01" placeholder="Örn. 0,30"></div>
+                <div class="workspace-field"><label for="parcelWidth">Parsel genişliği (m, isteğe bağlı)</label><input id="parcelWidth" type="number" min="0" step="0.1" placeholder="Örn. 20"></div>
+                <div class="workspace-field"><label for="parcelDepth">Parsel derinliği (m, isteğe bağlı)</label><input id="parcelDepth" type="number" min="0" step="0.1" placeholder="Örn. 40"></div>
+                <div class="workspace-field"><label for="sideSetback">Yan bahçe çekmesi (m, tek taraf)</label><input id="sideSetback" type="number" min="0" step="0.1" value="0"></div>
+                <div class="workspace-field"><label for="frontSetback">Ön bahçe çekmesi (m)</label><input id="frontSetback" type="number" min="0" step="0.1" value="0"></div>
+                <div class="workspace-field"><label for="rearSetback">Arka bahçe çekmesi (m)</label><input id="rearSetback" type="number" min="0" step="0.1" value="0"></div>
+                <div class="workspace-field"><label for="scenarioName">Senaryo açıklaması</label><input id="scenarioName" type="text" value="Temel varsayımlar"></div>
+              </div>
+              <div class="workspace-metrics" style="margin-top:12px">
+                <div class="workspace-metric"><span>TAKS × parsel alanı</span><strong><span id="taksFootprint">—</span></strong></div>
+                <div class="workspace-metric"><span>Çekmeler sonrası yaklaşık zarf</span><strong><span id="setbackFootprint">Bilgi girilmedi</span></strong></div>
+                <div class="workspace-metric"><span>Ön senaryo alan göstergesi</span><strong><span id="footprintResult">—</span></strong></div>
+              </div>
+              <p class="workspace-hint">Yaklaşık taban oturumu yalnızca kullanıcı girdileriyle hesaplanır: TAKS × parsel alanı ile çekmeler sonrası dikdörtgen varsayımlı alanın küçüğü. Parsel geometrisi, plan notları, yol kotu, yapı nizamı, yangın/otopark koşulları ve mevzuat kontrolleri dahil değildir.</p>
+              <div class="panel-title" style="margin:22px 0 10px"><div><h3 style="font-size:16px">Maliyet duyarlılık senaryoları</h3><p>Alan ve birim maliyet varsayımındaki değişimi görün.</p></div></div>
+              <div class="workspace-table-wrap">
+                <table class="workspace-table">
+                  <thead><tr><th>Senaryo</th><th>Birim maliyet değişimi</th><th>Tahmini toplam yapım maliyeti</th><th>Arsa sahibi alan eşdeğeri*</th><th>Müteahhit alan eşdeğeri*</th></tr></thead>
+                  <tbody id="costScenarios"></tbody>
+                </table>
+              </div>
+              <p class="workspace-hint warning">Maliyet göstergesi, yaklaşık birim maliyet × emsale göre alan hesabıdır. *Alan eşdeğerleri, toplam emsale göre alanın girilen paylaşım yüzdesiyle çarpımıdır; bağımsız bölüm tahsisi değildir. Arsa değeri, finansman, ruhsat, vergi, ortak alanlar ve emsal dışı alanlar dahil değildir.</p>
+            </section>
+
+            <section class="workspace-panel" id="panel-sherefiyye" role="tabpanel" aria-labelledby="tab-sherefiyye" hidden>
+              <div class="panel-title"><div><h3>Bağımsız bölüm karşılaştırması</h3><p>Kat, cephe, gün ışığı, manzara ve otopark ölçütlerinde 1–5 puan verin.</p></div><span class="panel-chip">Göreli endeks</span></div>
+              <div class="workspace-table-wrap">
+                <table class="workspace-table">
+                  <thead><tr><th>Bağımsız bölüm</th><th>Kat</th><th>Cephe</th><th>Gün ışığı</th><th>Manzara</th><th>Otopark</th><th>Endeks</th></tr></thead>
+                  <tbody id="unitRows">
+                    <tr><td><input aria-label="Bölüm adı 1" value="A-1"></td><td><select aria-label="Kat puanı 1"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Cephe puanı 1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></td><td><select aria-label="Gün ışığı puanı 1"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></td><td><select aria-label="Manzara puanı 1"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Otopark puanı 1"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></td><td><strong>—</strong></td></tr>
+                    <tr><td><input aria-label="Bölüm adı 2" value="A-2"></td><td><select aria-label="Kat puanı 2"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Cephe puanı 2"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Gün ışığı puanı 2"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Manzara puanı 2"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select></td><td><select aria-label="Otopark puanı 2"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></td><td><strong>—</strong></td></tr>
+                    <tr><td><input aria-label="Bölüm adı 3" value="A-3"></td><td><select aria-label="Kat puanı 3"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></td><td><select aria-label="Cephe puanı 3"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></td><td><select aria-label="Gün ışığı puanı 3"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></td><td><select aria-label="Manzara puanı 3"><option>1</option><option>2</option><option>3</option><option>4</option><option selected>5</option></select></td><td><select aria-label="Otopark puanı 3"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option></select></td><td><strong>—</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="workspace-hint">Puanlar eşit ağırlıklı, 1–5 kullanıcı değerlendirmesidir. Endeks sadece bu listedeki bölümleri göreli olarak karşılaştırır; ekspertiz değeri, hukuki şerefiye veya otomatik tahsis kararı değildir.</p>
+            </section>
+
+            <section class="workspace-panel" id="panel-documents" role="tabpanel" aria-labelledby="tab-documents" hidden>
+              <div class="panel-title"><div><h3>Belge hazırlık kontrolü</h3><p>Dosyanızdaki belgeleri işaretleyerek hazırlık durumunu takip edin.</p></div><span class="panel-chip" id="documentCount">0 / 6 hazır</span></div>
+              <div class="check-progress" aria-label="Belge hazırlık ilerlemesi"><span id="documentProgress"></span></div>
+              <div class="checklist" id="documentChecklist">
+                <label class="check-item"><input type="checkbox"> Güncel tapu kaydı ve takyidat / şerh kontrolü</label>
+                <label class="check-item"><input type="checkbox"> İmar durum belgesi (çap) ve plan notları</label>
+                <label class="check-item"><input type="checkbox"> Aplikasyon krokisi ve parsel sınır bilgisi</label>
+                <label class="check-item"><input type="checkbox"> Zemin etüdü ve mevcut yapı teknik raporları</label>
+                <label class="check-item"><input type="checkbox"> Müteahhit yetki belgesi ve şirket kayıtları</label>
+                <label class="check-item"><input type="checkbox"> Teminat / bina tamamlama güvencesi belgeleri</label>
+              </div>
+              <p class="workspace-hint warning">Bu liste genel hazırlık rehberidir; her proje için gerekli belgeler değişebilir. Resmî kayıt ve belgeleri ilgili kurum ve uzmanlardan doğrulayın.</p>
+              <p class="status-message" id="documentStatus" aria-live="polite"></p>
+            </section>
+
+            <section class="workspace-panel" id="panel-contractor" role="tabpanel" aria-labelledby="tab-contractor" hidden>
+              <div class="panel-title"><div><h3>Müteahhit inceleme listesi</h3><p>Teklif sahibinden belge isteyin; her maddeyi kaynağından ayrıca doğrulayın.</p></div><span class="panel-chip" id="contractorCount">0 / 5 kontrol</span></div>
+              <div class="check-progress" aria-label="Müteahhit kontrol ilerlemesi"><span id="contractorProgress"></span></div>
+              <div class="checklist" id="contractorChecklist">
+                <label class="check-item"><input type="checkbox"> Yetki belgesi sınıfı ve numarası doğrulandı</label>
+                <label class="check-item"><input type="checkbox"> Ticaret sicili ve şirket yetkilileri kontrol edildi</label>
+                <label class="check-item"><input type="checkbox"> Tamamlanan işler ve teslim referansları incelendi</label>
+                <label class="check-item"><input type="checkbox"> Vergi / SGK durum belgeleri talep edildi</label>
+                <label class="check-item"><input type="checkbox"> Teminat ve tamamlama sigortası şartları incelendi</label>
+              </div>
+              <p class="workspace-hint warning">Platform henüz resmî sicil veya mali kayıt sorgusu yapmaz. İşaretleme, güvenilirlik puanı ya da garanti anlamına gelmez.</p>
+              <p class="status-message" id="contractorStatus" aria-live="polite"></p>
+            </section>
+
+            <section class="workspace-panel" id="panel-contract" role="tabpanel" aria-labelledby="tab-contract" hidden>
+              <div class="panel-title"><div><h3>Sözleşme görüşme notu</h3><p>Taraf ve proje başlıklarını taslak not olarak düzenleyip indirebilirsiniz.</p></div><span class="panel-chip">Hukuki metin değildir</span></div>
+              <div class="workspace-grid">
+                <div class="workspace-field"><label for="ownerName">Arsa sahibi / taraf</label><input id="ownerName" placeholder="Ad veya şirket unvanı"></div>
+                <div class="workspace-field"><label for="builderName">Müteahhit / taraf</label><input id="builderName" placeholder="Ad veya şirket unvanı"></div>
+                <div class="workspace-field"><label for="siteAddress">Proje konumu</label><input id="siteAddress" placeholder="İl, ilçe, mahalle, ada/parsel"></div>
+                <div class="workspace-field"><label for="contractShare">Görüşülecek paylaşım oranı</label><input id="contractShare" type="number" min="0" max="100" value="43"></div>
+                <div class="workspace-field" style="grid-column:1/-1"><label for="contractNotes">Görüşme notları / açık koşullar</label><textarea id="contractNotes" placeholder="Teslim takvimi, teknik şartname, gecikme koşulları, teminat ve diğer açık konular..."></textarea></div>
+              </div>
+              <div class="contract-preview" id="contractPreview" aria-live="polite"></div>
+              <div class="panel-actions"><button class="button button-dark button-small" id="downloadDraft" type="button">Taslak notunu indir</button></div>
+              <p class="workspace-hint warning">Bu çıktı sözleşme, hukuki görüş veya noter belgesi değildir. İmzadan önce gayrimenkul ve inşaat hukuku alanında çalışan bir avukata inceletin.</p>
+              <p class="status-message" id="contractStatus" aria-live="polite"></p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="platform">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">Tek platform, bütüncül bakış</span>
+          <h2 class="section-title">Karmaşık süreci, anlaşılır kararlara dönüştürün.</h2>
+          <p>Arsa geliştirme kararlarını tek bir orana indirgemeyin. İmar varsayımlarını, maliyetleri, bağımsız bölüm dağılımını ve güvence koşullarını birlikte değerlendirin.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">⌂</span>
+            <h3>İmar ve alan senaryoları</h3>
+            <p>Parsel, TAKS, KAKS ve çekme mesafesi gibi girdilerle ön hesaplama yapın. Resmî imar belgesi ve uzman incelemesi gerektiğini her zaman görün.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">◷</span>
+            <h3>Maliyet ve paylaşım</h3>
+            <p>Farklı maliyet ve paylaşım varsayımlarını karşılaştırın. Sonuçların hangi girdilere dayandığını açıkça takip edin.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">▦</span>
+            <h3>Şerefiye karşılaştırması</h3>
+            <p>Kat, cephe, gün ışığı, manzara ve otopark gibi ölçütleri karşılaştırarak bağımsız bölüm dağılımını daha görünür hale getirin.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">⌖</span>
+            <h3>Harita ve risk katmanları</h3>
+            <p>Konum ve çevre bilgilerini tek ekranda düzenleyin. Jeolojik risk verilerini resmî ve güncel kaynaklardan doğrulamadan karar vermeyin.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">♙</span>
+            <h3>Taraflara özel panolar</h3>
+            <p>Arsa sahibi ve müteahhit için teklif, fizibilite ve güvence koşullarını aynı ölçütlerle değerlendiren şeffaf bir çalışma alanı.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon" aria-hidden="true">▤</span>
+            <h3>Belge ve güvence kontrolü</h3>
+            <p>Tapu, imar durumu, yetki belgeleri ve teminatlara ilişkin kontrol adımlarını düzenli biçimde takip edin.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section workflow" id="surec">
+      <div class="wrap workflow-grid">
+        <div class="section-heading">
+          <span class="eyebrow">Basit ve izlenebilir</span>
+          <h2 class="section-title">İlk veriden, bilinçli karara.</h2>
+          <p>Ön fizibilite bir başlangıç noktasıdır. Sağlam karar için belgeleri doğrulayın, uzman görüşü alın ve tüm tarafların aynı varsayımları kullandığından emin olun.</p>
+          <a class="button button-dark" href="#hesapla" style="margin-top:22px">Senaryonu oluştur <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="steps">
+          <article class="step"><span class="step-num">01</span><div><h3>Parsel bilgilerini ekleyin</h3><p>Konum, alan ve elinizdeki imar verilerini girerek ilk senaryoyu oluşturun.</p></div></article>
+          <article class="step"><span class="step-num">02</span><div><h3>Varsayımları karşılaştırın</h3><p>Alan, maliyet ve paylaşım değişikliklerinin sonuçları nasıl etkilediğini inceleyin.</p></div></article>
+          <article class="step"><span class="step-num">03</span><div><h3>Teklifleri aynı zeminde değerlendirin</h3><p>Teknik kapsamı, maliyetleri, takvimi ve teminatları aynı kontrol listesiyle karşılaştırın.</p></div></article>
+          <article class="step"><span class="step-num">04</span><div><h3>Uzmanlarla doğrulayın</h3><p>Karar öncesinde imar, mühendislik, değerleme ve hukuk uzmanlarından görüş alın.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hakkaniyet">
+      <div class="wrap fair-grid">
+        <div class="fair-visual" aria-label="Örnek parametrik bina kütlesi illüstrasyonu">
+          <div class="visual-top"><span>PARAMETRİK KÜTLE · ÖRNEK GÖRSEL</span><span class="visual-badge">Ön izleme</span></div>
+          <div class="building" aria-hidden="true"><div class="tower"></div><div class="tower"></div><div class="tower"></div><div class="tower"></div><div class="tower"></div><div class="ground"></div></div>
+          <div class="visual-caption"><span>Model, resmî proje değildir</span><span>3B konsept görünümü</span></div>
+        </div>
+        <div>
+          <div class="section-heading" style="margin-bottom:0">
+            <span class="eyebrow">Hakkaniyet, görünürlükle başlar</span>
+            <h2 class="section-title">Her teklifin arkasındaki varsayımı görün.</h2>
+            <p>Güven, belirsizlikleri saklamakla değil; veriyi, yöntemi ve sınırları açıkça paylaşmakla kurulur.</p>
+          </div>
+          <div class="fair-points">
+            <div class="fair-point"><span class="check">✓</span><div><strong>Karşılaştırılabilir teklifler</strong><span>Maliyet, takvim, kapsam ve güvence başlıklarını yan yana değerlendirin.</span></div></div>
+            <div class="fair-point"><span class="check">✓</span><div><strong>İzlenebilir varsayımlar</strong><span>Hesaplamaların hangi kullanıcı girdileriyle üretildiğini takip edin.</span></div></div>
+            <div class="fair-point"><span class="check">✓</span><div><strong>Uzman onayı için hazırlık</strong><span>Ön analizleri, resmî ve profesyonel doğrulamanın yerine değil, öncesine koyun.</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="proje-plan">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">Geliştirme akışı</span>
+          <h2 class="section-title">İşe başlamak için hazır, görünür bir plan.</h2>
+          <p>Tek başına bir imar oranı değil; veri, güvence ve karar akışıyla çalışan bir sistem kuruyoruz. Her adımın mantığını açıkça görüyor ve tarafların aynı zeminde konuşmasını sağlıyoruz.</p>
+        </div>
+        <div class="milestone-grid">
+          <article class="milestone-card">
+            <div class="mini-head">
+              <span class="eyebrow">Akış</span>
+              <h3>Proje yaşam döngüsü</h3>
+            </div>
+            <div class="risk-pills">
+              <span>Veri</span>
+              <span>Model</span>
+              <span>Teklif</span>
+              <span>Onay</span>
+            </div>
+            <div class="risk-meter" aria-label="Açık risk seviyesi"><span id="riskMeter"></span></div>
+            <div class="risk-summary">
+              <strong id="riskScoreLabel">Risk seviyesi: Orta</strong>
+              <p id="riskSummaryText">Parsel büyüklüğü ve maliyet varsayımları dengeli görünüyor; teknik ve hukuk kontrol listesi tamamlandığında karar daha güvenli hale gelir.</p>
+            </div>
+          </article>
+
+          <article class="milestone-card">
+            <div class="mini-head">
+              <span class="eyebrow">Öneri</span>
+              <h3>Sonraki adımlar</h3>
+            </div>
+            <ul class="milestone-list">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>Parsel dokümanlarını doğrula</strong>
+                  <p>Tapu, imar durumu ve koordine edilen bilgileri aynı anda kontrol edin.</p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>Maliyet dönüşümünü çalıştır</strong>
+                  <p>Alan, KAKS ve birim maliyeti göre senaryoyu güncelleyip farklı kombinasyonları karşılaştırın.</p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>Teklif ve güvence koşullarını netleştir</strong>
+                  <p>Paylaşım oranı, teslim takvimi ve teminat unsurlarını tek bir notta toplayın.</p>
+                </div>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="iletisim">
+      <div class="wrap">
+        <div class="cta-panel">
+          <div><h2>İlk senaryonuzu oluşturmaya hazır mısınız?</h2><p>Parsel verilerinizi girin; varsayımlarınızı görünür, karar sürecinizi daha düzenli hale getirin.</p></div>
+          <a class="button button-lime" href="#hesapla">Ön fizibiliteye başla <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-row">
+      <a class="footer-brand" href="#top">ASATA MİZAN</a>
+      <span class="footer-copy">© 2026 ASATA MİZAN · Ön fizibilite bilgilendirme amaçlıdır; resmî değerleme veya hukuki görüş değildir.</span>
+      <div class="footer-links"><a href="#hakkaniyet">Şeffaflık</a><a href="#surec">Süreç</a><a href="#top">Yukarı çık ↑</a></div>
+    </div>
+  </footer>
+
+  <script>
+    const parcelArea = document.getElementById("parcelArea");
+    const emsal = document.getElementById("emsal");
+    const ownerShare = document.getElementById("ownerShare");
+    const buildArea = document.getElementById("buildArea");
+    const ownerShareBadge = document.getElementById("ownerShareBadge");
+    const ownerLegend = document.getElementById("ownerLegend");
+    const builderLegend = document.getElementById("builderLegend");
+    const splitOwner = document.getElementById("splitOwner");
+    const unitCost = document.getElementById("unitCost");
+    const workspaceArea = document.getElementById("workspaceArea");
+    const workspaceCost = document.getElementById("workspaceCost");
+    const workspaceSplit = document.getElementById("workspaceSplit");
+    const costScenarios = document.getElementById("costScenarios");
+    const areaFormatter = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 2 });
+    const currencyFormatter = new Intl.NumberFormat("tr-TR", {
+      style: "currency", currency: "TRY", maximumFractionDigits: 0
+    });
+
+    function updateScenario() {
+      const area = Math.max(0, Number(parcelArea.value) || 0);
+      const floorRatio = Math.max(0, Number(emsal.value) || 0);
+      const share = Math.min(100, Math.max(0, Number(ownerShare.value) || 0));
+      const estimatedArea = area * floorRatio;
+      const baseUnitCost = Math.max(0, Number(unitCost.value) || 0);
+      const estimatedCost = estimatedArea * baseUnitCost;
+      const percent = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 });
+      buildArea.textContent = areaFormatter.format(estimatedArea);
+      ownerShareBadge.textContent = `%${share}`;
+      ownerLegend.textContent = `%${share}`;
+      builderLegend.textContent = `%${100 - share}`;
+      splitOwner.style.width = `${share}%`;
+      workspaceArea.textContent = areaFormatter.format(estimatedArea);
+      workspaceCost.textContent = currencyFormatter.format(estimatedCost);
+      workspaceSplit.textContent = `%${percent.format(share)} / %${percent.format(100 - share)}`;
+      costScenarios.replaceChildren();
+      [
+        { label: "Düşük maliyet", change: -10 },
+        { label: "Temel senaryo", change: 0 },
+        { label: "Maliyet artışı", change: 20 }
+      ].forEach(({ label, change }) => {
+        const row = document.createElement("tr");
+        const values = [
+          label,
+          `${change > 0 ? "+" : ""}${change}%`,
+          currencyFormatter.format(estimatedArea * baseUnitCost * (1 + change / 100)),
+          `${areaFormatter.format(estimatedArea * share / 100)} m²`,
+          `${areaFormatter.format(estimatedArea * (100 - share) / 100)} m²`
+        ];
+        values.forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.append(cell);
+        });
+        costScenarios.append(row);
+      });
+      updateFootprint();
+      updateProjectRisk();
+    }
+
+    [parcelArea, emsal, ownerShare, unitCost].forEach((input) => input.addEventListener("input", updateScenario));
+    updateScenario();
+
+    function updateProjectRisk() {
+      const riskMeter = document.getElementById("riskMeter");
+      const riskScoreLabel = document.getElementById("riskScoreLabel");
+      const riskSummaryText = document.getElementById("riskSummaryText");
+      const area = Math.max(0, Number(parcelArea.value) || 0);
+      const floorRatio = Math.max(0, Number(emsal.value) || 0);
+      const share = Math.min(100, Math.max(0, Number(ownerShare.value) || 0));
+      const unitCost = Math.max(0, Number(document.getElementById("unitCost").value) || 0);
+
+      const varianceScore = (share < 45 ? 18 : share > 60 ? 12 : 8) +
+        (floorRatio > 1.2 ? 12 : floorRatio > 0.8 ? 8 : 4) +
+        (unitCost > 8000 ? 16 : unitCost > 5000 ? 10 : 6) +
+        (area < 600 ? 8 : area > 3000 ? 4 : 6);
+      const riskScore = Math.min(94, Math.max(22, varianceScore));
+      let state = "Orta";
+      if (riskScore < 35) state = "Düşük";
+      else if (riskScore > 70) state = "Yüksek";
+
+      riskMeter.style.width = `${riskScore}%`;
+      riskMeter.style.background = riskScore > 70 ? "linear-gradient(90deg, #ec7a48 0%, #d43d36 100%)" : riskScore < 35 ? "linear-gradient(90deg, #7fc977 0%, #4ca57a 100%)" : "linear-gradient(90deg, #7fc977 0%, #d7c96d 55%, #d47847 100%)";
+      riskScoreLabel.textContent = `Risk seviyesi: ${state}`;
+
+      if (state === "Düşük") {
+        riskSummaryText.textContent = "Parsel ve maliyet verileri dengeli görünüyor; geleneksel hazırlık ve belge doğrulama adımını sürdürmek yeterli olacaktır.";
+      } else if (state === "Yüksek") {
+        riskSummaryText.textContent = "Fiyat ve pay oranı daha riskli bir tabana oturuyor; imar, hukuk ve teminat kontrolünü önceleyin ve alternatif senaryoları değerlendirin.";
+      } else {
+        riskSummaryText.textContent = "Parsel büyüklüğü ve maliyet varsayımları dengeli görünüyor; teknik ve hukuk kontrol listesi tamamlandığında karar daha güvenli hale gelir.";
+      }
+    }
+
+    const footprintInputs = ["taks", "parcelWidth", "parcelDepth", "sideSetback", "frontSetback", "rearSetback"]
+      .map((id) => document.getElementById(id));
+    function updateFootprint() {
+      const area = Math.max(0, Number(parcelArea.value) || 0);
+      const taksValue = Number(document.getElementById("taks").value);
+      const taksArea = area * taksValue;
+      const parcelWidthValue = Number(document.getElementById("parcelWidth").value);
+      const parcelDepthValue = Number(document.getElementById("parcelDepth").value);
+      const sideValue = Math.max(0, Number(document.getElementById("sideSetback").value) || 0);
+      const frontValue = Math.max(0, Number(document.getElementById("frontSetback").value) || 0);
+      const rearValue = Math.max(0, Number(document.getElementById("rearSetback").value) || 0);
+      const taksOutput = document.getElementById("taksFootprint");
+      const setbackOutput = document.getElementById("setbackFootprint");
+      const resultOutput = document.getElementById("footprintResult");
+      taksOutput.textContent = Number.isFinite(taksArea) && taksValue > 0 ? `${areaFormatter.format(taksArea)} m²` : "TAKS girilmedi";
+      const hasDimensions = parcelWidthValue > 0 && parcelDepthValue > 0;
+      const clearWidth = parcelWidthValue - 2 * sideValue;
+      const clearDepth = parcelDepthValue - frontValue - rearValue;
+      const setbackArea = hasDimensions && clearWidth > 0 && clearDepth > 0 ? clearWidth * clearDepth : null;
+      setbackOutput.textContent = setbackArea === null ? "Geçerli boyut girilmedi" : `${areaFormatter.format(setbackArea)} m²`;
+      if (taksValue > 0 && setbackArea !== null) {
+        resultOutput.textContent = `${areaFormatter.format(Math.min(taksArea, setbackArea))} m²`;
+      } else if (taksValue > 0) {
+        resultOutput.textContent = `${areaFormatter.format(taksArea)} m² (yalnızca TAKS)`;
+      } else if (setbackArea !== null) {
+        resultOutput.textContent = `${areaFormatter.format(setbackArea)} m² (yalnızca zarf)`;
+      } else {
+        resultOutput.textContent = "Hesaplanamadı";
+      }
+    }
+    footprintInputs.forEach((input) => input.addEventListener("input", updateFootprint));
+
+    const nav = document.getElementById("nav");
+    const menuButton = document.getElementById("menuButton");
+    menuButton.addEventListener("click", () => {
+      const isOpen = nav.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute("aria-label", isOpen ? "Menüyü kapat" : "Menüyü aç");
+    });
+    nav.querySelectorAll(".nav-links a").forEach((link) => link.addEventListener("click", () => {
+      nav.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Menüyü aç");
+    }));
+
+    const moduleTabs = [...document.querySelectorAll(".workspace-tab")];
+    function selectModule(selectedTab) {
+      moduleTabs.forEach((tab) => {
+        const selected = tab === selectedTab;
+        tab.setAttribute("aria-selected", String(selected));
+        document.getElementById(tab.getAttribute("aria-controls")).hidden = !selected;
+      });
+    }
+    moduleTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => selectModule(tab));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home" ? 0
+          : event.key === "End" ? moduleTabs.length - 1
+            : (index + (event.key === "ArrowRight" ? 1 : moduleTabs.length - 1)) % moduleTabs.length;
+        moduleTabs[nextIndex].focus();
+        selectModule(moduleTabs[nextIndex]);
+      });
+    });
+
+    const projectName = document.getElementById("projectName");
+    projectName.addEventListener("input", () => {
+      document.getElementById("workspaceProjectName").textContent = projectName.value.trim() || "Yeni parsel analizi";
+    });
+
+    function updateUnitScores() {
+      document.querySelectorAll("#unitRows tr").forEach((row) => {
+        const scores = [...row.querySelectorAll("select")].map((select) => Number(select.value) || 0);
+        const index = scores.length ? (scores.reduce((sum, score) => sum + score, 0) / (scores.length * 5)) * 100 : 0;
+        row.querySelector("td:last-child strong").textContent = `%${Math.round(index)}`;
+      });
+    }
+    const unitRows = document.getElementById("unitRows");
+    unitRows.addEventListener("input", updateUnitScores);
+    unitRows.addEventListener("change", updateUnitScores);
+    updateUnitScores();
+
+    function updateChecklist(listId, countId, progressId, statusId, label) {
+      const checkboxes = [...document.querySelectorAll(`#${listId} input[type="checkbox"]`)];
+      const completed = checkboxes.filter((checkbox) => checkbox.checked).length;
+      document.getElementById(countId).textContent = `${completed} / ${checkboxes.length} ${label}`;
+      document.getElementById(progressId).style.width = `${checkboxes.length ? completed / checkboxes.length * 100 : 0}%`;
+      document.getElementById(statusId).textContent = `${completed} madde işaretlendi. Bu durum belge veya kayıt doğrulaması anlamına gelmez.`;
+    }
+    [
+      ["documentChecklist", "documentCount", "documentProgress", "documentStatus", "hazır"],
+      ["contractorChecklist", "contractorCount", "contractorProgress", "contractorStatus", "kontrol"]
+    ].forEach(([listId, countId, progressId, statusId, label]) => {
+      const list = document.getElementById(listId);
+      const update = () => updateChecklist(listId, countId, progressId, statusId, label);
+      list.addEventListener("change", update);
+      update();
+    });
+
+    const contractFields = ["ownerName", "builderName", "siteAddress", "contractShare", "contractNotes"]
+      .map((id) => document.getElementById(id));
+    const contractPreview = document.getElementById("contractPreview");
+    function getContractText() {
+      const [owner, builder, address, share, notes] = contractFields.map((field) => field.value.trim());
+      return [
+        "ASATA MİZAN — SÖZLEŞME GÖRÜŞME NOTU",
+        "",
+        `Arsa sahibi / taraf: ${owner || "[Belirtilecek]"}`,
+        `Müteahhit / taraf: ${builder || "[Belirtilecek]"}`,
+        `Proje konumu: ${address || "[Belirtilecek]"}`,
+        `Görüşülecek arsa sahibi payı: %${share || "43"} (ön varsayım)`,
+        "",
+        "Açık koşullar ve görüşme notları:",
+        notes || "[Teslim takvimi, teknik şartname, teminat ve diğer koşulları belirtin.]",
+        "",
+        "UYARI: Bu belge yalnızca görüşme notudur; sözleşme veya hukuki görüş değildir. İmzadan önce avukat incelemesi gerekir."
+      ].join("\n");
+    }
+    function updateContractPreview() {
+      contractPreview.textContent = getContractText();
+    }
+    contractFields.forEach((field) => field.addEventListener("input", updateContractPreview));
+    updateContractPreview();
+    document.getElementById("downloadDraft").addEventListener("click", () => {
+      const file = new Blob([getContractText()], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "asata-mizan-gorusme-notu.txt";
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      document.getElementById("contractStatus").textContent = "Görüşme notu indirildi.";
+    });
+  </script>
+</body>
+</html>
