@@ -11,7 +11,9 @@ ETIKET="${1:-}"
 KLASOR_ID="$(cat "$(dirname "$0")/drive_klasor_id.txt")"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 AD="ASATA_MIZAN_Kaynak_AUTO_${STAMP}${ETIKET:+-$ETIKET}.zip"
-CIKTI_DIR="${ASATA_YEDEK_DIR:-$HOME/asata_mizan_yedekler}"
+# Not: gws CLI --upload yolunu geçerli çalışma dizini İÇİNDE ister; yedek
+# dizini bu yüzden çalışma dizini altında, kaynak ağacın dışında tutulur.
+CIKTI_DIR="${ASATA_YEDEK_DIR:-$PWD/asata_mizan_yedekler}"
 mkdir -p "$CIKTI_DIR"
 ZIP="$CIKTI_DIR/$AD"
 
