@@ -1,6 +1,17 @@
 # ASATA MİZAN — Devam ve görev durum listesi
 
 **Son güncelleme:** 2026-10-25  
+
+## İş sonu protokolü — anlık yedek + numeric/grafik durum raporu
+
+Her iş paketinin kapanışında aşağıdaki adımlar koşulsuz uygulanır:
+
+1. **Anlık yedek:** `bash tools/is_sonu_yedek.sh [etiket]` — git izlenen kaynağı zaman damgalı ZIP yapıp Drive'daki `yedek/ASATA_MIZAN` klasörüne yükler, MD5'i `YEDEK_MANIFEST.txt`'ye işler.
+2. **Numeric + grafik rapor:** `python3 tools/durum_raporu.py [etiket]` — faz tamamlanma yüzdeleri, görev panosu sayımları, git/Drive istatistikleriyle `raporlar/DURUM_RAPORU_<zaman>.md` ve `raporlar/durum_grafik_<zaman>.png` üretir; rapor kullanıcıya sunulur.
+3. Rapor ve manifest değişiklikleri kaynakla birlikte commit edilip GitHub'a gönderilir.
+
+Gereksinimler: `gws` CLI (Drive) ve `python3 + matplotlib`. Yedekler gerçek kullanıcı verisi içermez; canlı veri `ASATA_DATA_DIR` altında tutulur ve yedek kapsamına girmez.
+
 **Çalışma alanı:** `Masaüstü/web`  
 **Yayın durumu:** Kaynak kod herkese açık [meysoft56/asata-mizan](https://github.com/meysoft56/asata-mizan) deposunda. Uygulama yerel geliştirme modunda; sentetik veriye ayrılmış tam erişimli demo `http://127.0.0.1:8002/` adresinde. Hosting'e/üretime yayın yapılmadı.
 
