@@ -45,8 +45,8 @@ def fazlar():
 
 def mvp_toplamlari():
     metin = (KOK / "PROJECT_STATUS.md").read_text(encoding="utf-8")
-    mvp = re.search(r"Dar MVP[^|]*\*\s*yaklaşık %(\d+)", metin)
-    tum = re.search(r"Tüm ürün vizyonu[^|]*\*\s*yaklaşık %(\d+)", metin)
+    mvp = re.search(r"Dar MVP[^\n]*?%(\d+)", metin)
+    tum = re.search(r"Tüm ürün vizyonu[^\n]*?%(\d+)", metin)
     return (
         int(mvp.group(1)) if mvp else None,
         int(tum.group(1)) if tum else None,
